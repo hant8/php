@@ -48,10 +48,12 @@
 
         <?php
 
-        foreach ($tasks as $task) { ?>
+        foreach ($tasks as $task) { 
 
-
-            <tr class='tasks__item task <? echo $task['Completed'] === true ? 'task--completed' : ''; ?>'>
+            /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
+            $flag = hours24($task['Date of completion'], $task['Completed']); 
+            ?>
+            <tr class='tasks__item task <? echo $task['Completed'] === true ? ' task--completed ' : ''; echo $flag ;?>'>
                 <?php
 
                 if ($show_complete_tasks === 0 && $task['Completed'] === true) {

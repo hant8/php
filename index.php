@@ -19,7 +19,7 @@ $tasks = [
     1 => [
 
         'Task' => 'Собеседование в IT компании',
-        'Date of completion' => '01.12.2019',
+        'Date of completion' => '01.09.2022',
         'Category' => 'Работа',
         'Completed' => false,
 
@@ -27,7 +27,7 @@ $tasks = [
     2 => [
 
         'Task' => 'Выполнить тестовое задание',
-        'Date of completion' => '25.12.2019',
+        'Date of completion' => '03.09.2022',
         'Category' => 'Работа',
         'Completed' => false,
 
@@ -35,7 +35,7 @@ $tasks = [
     3 => [
 
         'Task' => 'Сделать задание первого раздела',
-        'Date of completion' => '21.12.2019',
+        'Date of completion' => '02.09.2022',
         'Category' => 'Учеба',
         'Completed' => true,
 
@@ -43,7 +43,7 @@ $tasks = [
     4 => [
 
         'Task' => 'Встреча с другом',
-        'Date of completion' => '22.12.2019',
+        'Date of completion' => '30.8.2022',
         'Category' => 'Входящие',
         'Completed' => false,
 

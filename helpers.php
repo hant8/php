@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Проверяет переданную дату на соответствие формату 'ГГГГ-ММ-ДД'
  *
@@ -13,7 +14,8 @@
  *
  * @return bool true при совпадении с форматом 'ГГГГ-ММ-ДД', иначе false
  */
-function is_date_valid(string $date) : bool {
+function is_date_valid(string $date): bool
+{
     $format_to_check = 'Y-m-d';
     $dateTimeObj = date_create_from_format($format_to_check, $date);
 
@@ -29,7 +31,8 @@ function is_date_valid(string $date) : bool {
  *
  * @return mysqli_stmt Подготовленное выражение
  */
-function db_get_prepare_stmt($link, $sql, $data = []) {
+function db_get_prepare_stmt($link, $sql, $data = [])
+{
     $stmt = mysqli_prepare($link, $sql);
 
     if ($stmt === false) {
@@ -46,11 +49,9 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
 
             if (is_int($value)) {
                 $type = 'i';
-            }
-            else if (is_string($value)) {
+            } else if (is_string($value)) {
                 $type = 's';
-            }
-            else if (is_double($value)) {
+            } else if (is_double($value)) {
                 $type = 'd';
             }
 
@@ -96,7 +97,7 @@ function db_get_prepare_stmt($link, $sql, $data = []) {
  *
  * @return string Рассчитанная форма множественнго числа
  */
-function get_noun_plural_form (int $number, string $one, string $two, string $many): string
+function get_noun_plural_form(int $number, string $one, string $two, string $many): string
 {
     $number = (int) $number;
     $mod10 = $number % 10;
@@ -126,12 +127,13 @@ function get_noun_plural_form (int $number, string $one, string $two, string $ma
  * @param array $data Ассоциативный массив с данными для шаблона
  * @return string Итоговый HTML
  */
-function include_template($name, array $data = []) {
+function include_template($name, array $data = [])
+{
     $name = 'templates/' . $name; // Фрмирует путь  к шаблону
     $result = '';
 
     if (!is_readable($name)) { // Определяет существование файла и доступен ли он для чтения
-        return $result; 
+        return $result;
     }
 
     ob_start(); // Включение буферизации вывода
@@ -160,4 +162,20 @@ function list_count($tasks, $project)
         }
     }
     return $count;
+}
+function hours24($date, $completed)
+{
+    $result = '';
+    if (($date !== null)) {
+        $date_timestemp = strtotime($date); /* Получаем заданную дату в timestamp */
+        $time =  $date_timestemp - time(); /* Разность между заданой датой и текущим временем в timestamp */
+
+        /* 86400 - это количество секунд равное 24 часам */
+        if (($time < 86400) && ($completed === false)) {
+
+            $result = 'task--important';
+        }
+    }
+
+    return $result;
 }
