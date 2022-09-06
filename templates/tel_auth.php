@@ -68,9 +68,6 @@
           </div>
 
           <div class="form__row form__row--controls">
-          <? if (isset($errors)) {
-              echo "<p class='error-message'>Пожалуйста, исправьте ошибки в форме</p>";
-          } ?>
             <input class="button" type="submit" name="submit" value="Войти">
           </div>
         </form>

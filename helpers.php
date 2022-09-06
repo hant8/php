@@ -293,15 +293,9 @@ function issetProject($project_id, $id, $link)
 
     return !empty($result)? true : false;
 }
+
 /** Функция добавляет новую задачу в бд
- * @param mixed $id
- * @param mixed $name
- * @param mixed $project_id
- * @param mixed $date
- * @param mixed $file
- * @param mixed $link
  * 
- * @return [type]
  */
 function addTask($id, $name, $project_id, $date, $file, $link)
 {   
@@ -329,9 +323,7 @@ function addTask($id, $name, $project_id, $date, $file, $link)
     
 }
 /** Фильтрация данных от XSS
- * @param mixed $arr
  * 
- * @return [type]
  */
 function xss($arr)
 {   
@@ -345,10 +337,7 @@ function xss($arr)
     return $arr;
 }
 /** Фильтрация данных от XSS
- * @param mixed $email
- * @param mixed $link
  * 
- * @return [type]
  */
 function issetEmail($email, $link)
 {   
@@ -369,12 +358,7 @@ function issetEmail($email, $link)
     return !empty($result)? true : false;
 }
 /** Функция регистрирует нового пользователя
- * @param mixed $name
- * @param mixed $email
- * @param mixed $password
- * @param mixed $link
  * 
- * @return [type]
  */
 function addUser($name, $email, $password, $link)
 {   
@@ -395,10 +379,7 @@ function addUser($name, $email, $password, $link)
     mysqli_stmt_execute($stmt);
 }
 /** Функция возвращает результат по полнотекстовому поиску
- * @param mixed $search
- * @param mixed $link
  * 
- * @return [type]
  */
 function searchTasks($search, $link)
 {   
@@ -422,13 +403,8 @@ function searchTasks($search, $link)
     return $tasks;
     
 }
-
 /** Функция возвращает результат по полнотекстовому поиску
- * @param mixed $id
- * @param mixed $name
- * @param mixed $link
  * 
- * @return [type]
  */
 function uniqueProject($id, $name, $link)
 {   
@@ -452,11 +428,7 @@ function uniqueProject($id, $name, $link)
     
 }
 /** Функция добавляет новый проект в бд
- * @param mixed $id
- * @param mixed $name
- * @param mixed $link
  * 
- * @return [type]
  */
 function addProject($id, $name, $link)
 {   
