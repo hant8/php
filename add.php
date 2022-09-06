@@ -29,31 +29,33 @@ $data = [
 
 /* Если форма была отправлена */
 if(isset($_POST['submit'])){
-    /* Соханяем введенные данные в сессию */
-    $_SESSION['taskName'] = $_POST['name'];
 
+    /* Фильтрация данных от XSS */
+    $request = xss($_POST); 
+    /* Соханяем введенные данные в сессию */
+    $_SESSION['taskName'] = $request['name'];
     /* Массив ошибок */
     $errors = [];
     /* Проверки на заполнение всех обязательных полей */
-    empty($_POST['name'])? $errors['errorTaskName'] = 'Имя задачи не должно быть пустым' : '';
-    empty($_POST['project'])? $errors['errorTaskProject'] = 'Выберите проект' : '';
+    empty($request['name'])? $errors['errorTaskName'] = 'Имя задачи не должно быть пустым' : '';
+    empty($request['project'])? $errors['errorTaskProject'] = 'Выберите проект' : '';
     /* Проверка на правильный формат даты */
-    if(!empty($_POST['date'])){
+    if(!empty($request['date'])){
         /* Соханяем введенные данные в сессию */
-        $_SESSION['taskDate'] = $_POST['date'];
-        is_date_valid($_POST['date']) === false? $errors['errorTaskDateFormat'] = "Переданная дата не соответствует формату 'ГГГГ-ММ-ДД'" : '';
+        $_SESSION['taskDate'] = $request['date'];
+        is_date_valid($request['date']) === false? $errors['errorTaskDateFormat'] = "Переданная дата не соответствует формату 'ГГГГ-ММ-ДД'" : '';
         /* Текущий день */
         $day = date('Y-m-d');
         /* Проверка на корректность заданной даты */
-        if($_POST['date'] !== $day && strtotime($_POST['date']) < strtotime($day)){
+        if($request['date'] !== $day && strtotime($request['date']) < strtotime($day)){
             $errors['errorTaskDate'] = "Дата должна быть больше или равна текущей";
         }
     }else{
-        $_POST['date']  = null;
+        $request['date']  = null;
     }
 
     /* Проверка на существование проекта с переданным id */
-    issetProject($_POST['project']??'', $id, $link) === false? $errors['errorProject'] = "Проекта не существует" : '';    
+    issetProject($request['project']??'', $id, $link) === false? $errors['errorProject'] = "Проекта не существует" : '';    
     
     /* Сохранение файла */
     if($_FILES['file']['size'] !== 0){ /* Проверка на загрузку файла */
@@ -69,7 +71,7 @@ if(isset($_POST['submit'])){
     if(!empty($errors)){
         $data['errors'] = $errors;
     }else{
-        addTask($id, $_POST['name'], $_POST['project'], $_POST['date'], $file, $link);
+        addTask($id, $request['name'], $request['project'], $request['date'], $file, $link);
         header('Location: index.php');
     } 
 }

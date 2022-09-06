@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><? echo $title; ?></title>
+    <title><? echo strip_tags($title); ?></title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
@@ -24,7 +24,7 @@
 
                     <div class="main-header__side-item user-menu">
                         <div class="user-menu__data">
-                            <p><? echo $user;?></p>
+                            <p><? echo strip_tags($user)?></p>
 
                             <a href="#">Выйти</a>
                         </div>

@@ -289,8 +289,7 @@ function issetProject($project_id, $id, $link)
     return !empty($result)? true : false;
 }
 
-
-/**
+/** Функция добавляет новую задачу в бд
  * @param mixed $id
  * @param mixed $name
  * @param mixed $project_id
@@ -324,4 +323,20 @@ function addTask($id, $name, $project_id, $date, $file, $link)
 
     mysqli_stmt_execute($stmt);
     
+}
+/** Фильтрация данных от XSS
+ * @param mixed $arr
+ * 
+ * @return [type]
+ */
+function xss($arr)
+{   
+    foreach ($arr as $elem) {
+        if (is_array($elem)) {
+            xss($elem);
+        } else {
+            strip_tags($elem);
+        }
+    }
+    return $arr;
 }

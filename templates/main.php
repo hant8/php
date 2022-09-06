@@ -31,7 +31,6 @@
             if(isset($_GET['project_active']) && $project_active != $task['project_id']){
                 continue;
             }
-            
             /* Пропускаем выполненые задачи если чекбокс неактивен */
             if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
             /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */

@@ -40,10 +40,14 @@ if(isset($_REQUEST['project_active'])){
     if(empty($test)){
         exit(header('Location: /error404/'));
     }
-    /* Если проект существует  */
-    $project_active = $_REQUEST['project_active'];
+    /* Если проект существует */
+    $project_active = strip_tags($_REQUEST['project_active']);
 }
+/* Фильтрация данных от XSS */
 
+$tasks = xss($tasks);
+$projects = xss($projects); 
+    
 /* Необходимые данные шаблона */
 $data = [
 
