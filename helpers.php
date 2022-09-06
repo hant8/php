@@ -258,9 +258,10 @@ function tasksUser($id, $link)
     $stmt = db_get_prepare_stmt($link, $query, $data);
 
     /* Функция отправляет подготовленный запрос и извлекает данные */
-    $tasks = array_reverse(reading_data($stmt));
 
-
+    $tasks = reading_data($stmt);
+    $tasks = !empty($tasks)? array_reverse($tasks) : '';
+    
     return $tasks;
 }
 /** Функция проверяет наличие данного проекта у пользователя
@@ -288,7 +289,6 @@ function issetProject($project_id, $id, $link)
 
     return !empty($result)? true : false;
 }
-
 /** Функция добавляет новую задачу в бд
  * @param mixed $id
  * @param mixed $name
@@ -339,4 +339,54 @@ function xss($arr)
         }
     }
     return $arr;
+}
+/** Фильтрация данных от XSS
+ * @param mixed $email
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function issetEmail($email, $link)
+{   
+
+    $query = "SELECT * FROM users
+    WHERE users.email = ?";
+
+    /* Данные запроса */
+    $data = [
+        $email
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    /* Функция отправляет подготовленный запрос и извлекает данные */
+    $result = reading_data($stmt);
+
+    return !empty($result)? true : false;
+}
+/** Функция регистрирует нового пользователя
+ * @param mixed $name
+ * @param mixed $email
+ * @param mixed $password
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function addUser($name, $email, $password, $link)
+{   
+    /* Хешируем пароль */
+    $password = password_hash($password, PASSWORD_DEFAULT);
+    /* Дата регистрации */
+    $date_register = date('Y-m-d H:i:s');
+    $query = "INSERT INTO users SET users.name = ?, users.email = ?, users.password = ?,
+    date_register = ?";
+
+    /* Данные запроса */
+    $data = [
+        $name, $email, $password, $date_register
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    mysqli_stmt_execute($stmt);
 }

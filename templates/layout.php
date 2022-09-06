@@ -20,47 +20,23 @@
                 </a>
 
                 <div class="main-header__side">
-                    <a class='main-header__side-item button button--plus open-modal' href='add.php'>Добавить задачу</a>
-
-                    <div class="main-header__side-item user-menu">
+                    <? if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){ ?>
+                        <a class='main-header__side-item button button--plus open-modal' href='add.php'>Добавить задачу</a>
+                        <div class="main-header__side-item user-menu">
                         <div class="user-menu__data">
                             <p><? echo strip_tags($user)?></p>
 
-                            <a href="#">Выйти</a>
+                            <a href="logout.php">Выйти</a>
                         </div>
                     </div>
+                    <? }else{ ?>
+                        <a class="main-header__side-item button button--transparent" href="auth.php">Войти</a>
+                    <?}?>
                 </div>
             </header>
 
             <div class="content">
-                <section class="content__side">
-                    <h2 class="content__side-heading">Проекты</h2>
-
-                    <nav class="main-navigation">
-                        <ul class="main-navigation__list">
-                            <?php
-                            if (!empty($projects)) {
-
-                                foreach ($projects as $project) {
-
-                                    $count = list_count($tasks, $project['project_name']);
-                                    // Ищем активные проект
-                                    $active_project = (isset($_GET['project_active']) && ($project_active == $project['project_id'])) ? ' main-navigation__list-item--active' : '';
-                                    
-                            ?>
-                                    <li class='main-navigation__list-item'>
-                                        <? echo "<a class='main-navigation__list-item-link $active_project' href='index.php?project_active={$project['project_id']}'>{$project['project_name']}</a>"; ?>
-                                        <span class='main-navigation__list-item-count'><? echo $count; ?></span>
-                                    </li>
-
-                            <? }
-                            } ?>
-                        </ul>
-                    </nav>
-
-                    <a class="button button--transparent button--plus content__side-button" href="pages/form-project.html" target="project_add">Добавить проект</a>
-                </section>
-                
+            <? if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){require 'templates/left_sidebar.php';}?>
                 <? echo $content; ?>
             </div>
         </div>
@@ -74,7 +50,7 @@
                 <p>Веб-приложение для удобного ведения списка дел.</p>
             </div>
 
-            <a class="main-footer__button button button--plus" href="pages/form-task.html">Добавить задачу</a>
+            <? echo isset($_SESSION['user_id']) && isset($_SESSION['user_name'])? '<a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>' : '';?>
 
             <div class="main-footer__social social">
                 <span class="visually-hidden">Мы в соцсетях:</span>

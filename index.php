@@ -9,56 +9,68 @@ require_once('helpers.php');
 $show_complete_tasks = rand(0, 1);
 $title = 'Главная';
 
-/* Данные о пользователе */
-$user = 'Владислав';
-$id = 1;
+/* Данные гостя */
+$data = [];
 
-/* Подключение к базе анных  */
-mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
-$link = mysqli_connect("localhost", "root", "", "mydeal_master");
+/* Шаблона гостя */
+$name = 'tel_register.php';
 
-$projects = projecstUser($id, $link);
+if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){
 
-$tasks = tasksUser($id, $link);
+    /* Данные о пользователе */
+    $user = $_SESSION['user_name'];
+    $id = $_SESSION['user_id'];
 
-/* Если есть активный проект */
-if(isset($_REQUEST['project_active'])){
+    /* Подключение к базе анных  */
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    $link = mysqli_connect("localhost", "root", "", "mydeal_master");
 
-    /* Проверка на существование проекта с заданным id */
-    $query = "SELECT
-    projects.id as project_id
-    FROM
-    projects
-    WHERE projects.id = ?";
-    $projects_id = [
-        $_REQUEST['project_active']
-    ];
-    $stmt = db_get_prepare_stmt($link, $query, $projects_id);
-    $test = reading_data($stmt);
+    $projects = projecstUser($id, $link);
 
-    /* Если такого проекта не существует */
-    if(empty($test)){
-        exit(header('Location: /error404/'));
+    $tasks = tasksUser($id, $link);
+
+    /* Если есть активный проект */
+    if(isset($_REQUEST['project_active'])){
+
+        /* Проверка на существование проекта с заданным id */
+        $query = "SELECT
+        projects.id as project_id
+        FROM
+        projects
+        WHERE projects.id = ?";
+        $projects_id = [
+            $_REQUEST['project_active']
+        ];
+        $stmt = db_get_prepare_stmt($link, $query, $projects_id);
+        $test = reading_data($stmt);
+
+        /* Если такого проекта не существует */
+        if(empty($test)){
+            exit(header('Location: /error404/'));
+        }
+        /* Если проект существует */
+        $project_active = strip_tags($_REQUEST['project_active']);
     }
-    /* Если проект существует */
-    $project_active = strip_tags($_REQUEST['project_active']);
-}
-/* Фильтрация данных от XSS */
 
-$tasks = xss($tasks);
-$projects = xss($projects); 
-    
-/* Необходимые данные шаблона */
-$data = [
+    /* Фильтрация данных от XSS */
+
+    $tasks = !empty($tasks)? xss($tasks): '';
+    $projects = !empty($projects)? xss($projects): ''; 
+
+    /* Необходимые данные шаблона */
+    $data = [
 
     'show_complete_tasks' => $show_complete_tasks,
     'tasks' => $tasks,
     'project_active' => $project_active??''
 
-];
+    ];
 
-/* Имя шаблона */
-$name = 'main.php';
+    /* Имя шаблона */
+    $name = 'main.php';
+    $content = include_template($name, $data);
+
+}
 
 $content = include_template($name, $data);
 
@@ -67,9 +79,9 @@ $name = 'layout.php';
 $data = [
     'title' => $title,
     'content' => $content,
-    'user' => $user,
-    'projects' => $projects,
-    'tasks' => $tasks,
+    'user' => $user??'',
+    'projects' => $projects??'',
+    'tasks' => $tasks??'',
     'project_active' => $project_active??''
 ];
 

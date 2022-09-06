@@ -13,8 +13,8 @@ $link = mysqli_connect("localhost", "root", "", "mydeal_master");
 $title = 'Добавить задачу'; 
 
 /* Данные о пользователе */
-$user = 'Владислав';
-$id = 1;
+$user = $_SESSION['user_name'];
+$id = $_SESSION['user_id'];;
 
 $projects = projecstUser($id, $link);
 $tasks = tasksUser($id, $link);
@@ -75,9 +75,6 @@ if(isset($_POST['submit'])){
         header('Location: index.php');
     } 
 }
-
-
-
 
 $content = include_template($name, $data);
 

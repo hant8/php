@@ -4,7 +4,7 @@
     <div class="form__row">
       <label class="form__label" for="name">Название <sup>*</sup></label>
 
-      <input class="form__input <? echo isset($errors['errorTaskName']) ? 'form__input--error' : ''; ?>" type="text" name="name" id="name" value="<? echo isset($_SESSION['taskName']) ? "{$_SESSION['taskName']}" : ''; ?>" placeholder="Введите название">
+      <input class="form__input <? echo isset($errors['errorTaskName']) ? 'form__input--error' : ''; ?>" type="text" name="name" id="name" value="<? echo isset($_SESSION['taskName']) ? $_SESSION['taskName'] : ''; ?>" placeholder="Введите название">
       <?php
 
       if (isset($errors['errorTaskName'])) {
