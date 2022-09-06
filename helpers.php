@@ -142,3 +142,22 @@ function include_template($name, array $data = []) {
 
     return $result;
 }
+/**
+ * @param mixed $tasks
+ * @param mixed $project
+ * 
+ * @return [int]
+ */
+function list_count($tasks, $project)
+{
+
+    $count = 0;
+    foreach ($tasks as $task) {
+
+        if ($task['Category'] === $project) {
+
+            $count++;
+        }
+    }
+    return $count;
+}
