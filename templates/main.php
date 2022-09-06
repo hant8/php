@@ -1,8 +1,8 @@
 <main class="content__main">
     <h2 class="content__main-heading">Список задач</h2>
 
-    <form class="search-form" action="index.php" method="post" autocomplete="off">
-        <input class="search-form__input" type="text" name="" value="" placeholder="Поиск по задачам">
+    <form class="search-form" action="index.php" method="GET" autocomplete="off">
+        <input class="search-form__input" type="text" name="search" value="" placeholder="Поиск по задачам">
 
         <input class="search-form__submit" type="submit" name="" value="Искать">
     </form>
@@ -25,34 +25,40 @@
     <table class="tasks">
 
         <?php
-        if(!empty($tasks)){
-        foreach ($tasks as $task) {
+        if(!empty($tasks) || !empty($search)){
 
-            if(isset($_GET['project_active']) && $project_active != $task['project_id']){
-                continue;
+            if(isset($search) && is_string($search)){
+                echo $search;
+            }else{
+                $tasks = $search ?? $tasks;
+                foreach ($tasks as $task) {
+
+                    if(isset($_GET['project_active']) && $project_active != $task['project_id']){
+                        continue;
+                    }
+                    /* Пропускаем выполненые задачи если чекбокс неактивен */
+                    if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
+                    /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
+                    $flag = hours24($task['task_date'], $task['task_completed']);
+                    ?>
+                    <tr class='tasks__item task <? echo $task['task_completed'] == true ? ' task--completed ' : ''; echo $flag ;?>'>
+    
+    
+                        <td class='task__select'>
+                            <label class='checkbox task__checkbox'>
+                                <input class='checkbox__input visually-hidden task__checkbox' type='checkbox' value='1'>
+                                <span class='checkbox__text'><? echo $task['task_name']; ?></span>
+                            </label>
+                        </td>
+    
+                        <td class='task__file'>
+                            <a class='download-link' href='<?{ echo $task['task_file'];}?>'><?{ echo $task['task_file'];}?></a>
+                        </td>
+    
+                        <td class='task__date'><? echo $task['task_date']; ?></td>
+                    </tr>
+            <?  }
             }
-            /* Пропускаем выполненые задачи если чекбокс неактивен */
-            if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
-            /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
-            $flag = hours24($task['task_date'], $task['task_completed']);
-            ?>
-            <tr class='tasks__item task <? echo $task['task_completed'] == true ? ' task--completed ' : ''; echo $flag ;?>'>
-
-
-                <td class='task__select'>
-                    <label class='checkbox task__checkbox'>
-                        <input class='checkbox__input visually-hidden task__checkbox' type='checkbox' value='1'>
-                        <span class='checkbox__text'><? echo $task['task_name']; ?></span>
-                    </label>
-                </td>
-
-                <td class='task__file'>
-                    <a class='download-link' href='<?{ echo $task['task_file'];}?>'><?{ echo $task['task_file'];}?></a>
-                </td>
-
-                <td class='task__date'><? echo $task['task_date']; ?></td>
-            </tr>
-    <?  }
         }?>
     </table>
 </main>

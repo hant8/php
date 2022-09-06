@@ -60,12 +60,22 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){
     /* Необходимые данные шаблона */
     $data = [
 
-    'show_complete_tasks' => $show_complete_tasks,
-    'tasks' => $tasks,
-    'project_active' => $project_active??''
+        'show_complete_tasks' => $show_complete_tasks,
+        'tasks' => $tasks,
+        'project_active' => $project_active??''
 
     ];
 
+    /* Определяем есть ли полнотекстовый поиск */
+
+    if(isset($_GET['search']) && !empty($_GET['search'])){
+        
+        $get = strip_tags($_GET['search']);
+        trim($get);
+        $search = searchTasks($get, $link);
+
+        $data['search'] = empty($search)? 'Ничего не найдено по вашему запросу' : $search;         
+    }
     /* Имя шаблона */
     $name = 'main.php';
     $content = include_template($name, $data);

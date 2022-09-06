@@ -326,7 +326,6 @@ function addTask($id, $name, $project_id, $date, $file, $link)
     mysqli_stmt_execute($stmt);
     
 }
-
 /** Фильтрация данных от XSS
  * @param mixed $arr
  * 
@@ -392,4 +391,33 @@ function addUser($name, $email, $password, $link)
     $stmt = db_get_prepare_stmt($link, $query, $data);
 
     mysqli_stmt_execute($stmt);
+}
+
+/** Функция возвращает результат по полнотекстовому поиску
+ * @param mixed $search
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function searchTasks($search, $link)
+{   
+    $query = "SELECT 
+        tasks.name as task_name,
+        tasks.date as task_date,
+        tasks.completed as task_completed,
+        tasks.file as task_file
+        FROM
+        tasks
+        WHERE MATCH (name) AGAINST (?)";
+    
+    /* Данные запроса */
+    $data = [
+        $search
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+    $tasks = reading_data($stmt);
+
+    return $tasks;
+    
 }
