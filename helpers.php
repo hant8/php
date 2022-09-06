@@ -71,7 +71,6 @@ function db_get_prepare_stmt($link, $sql, $data = [])
             die($errorMsg);
         }
     }
-
     return $stmt;
 }
 
@@ -144,8 +143,8 @@ function include_template($name, array $data = [])
 
     return $result;
 }
-/**
- * @param mixed $tasks
+/** Подсчет задач в проекте 
+ * @param array $tasks
  * @param mixed $project
  * 
  * @return [int]
@@ -156,26 +155,48 @@ function list_count($tasks, $project)
     $count = 0;
     foreach ($tasks as $task) {
 
-        if ($task['Category'] === $project) {
+        if ($task['project_name'] === $project) {
 
             $count++;
         }
     }
     return $count;
 }
+/** Функция определяет задачи до выполнени которых меньше 24ч
+ * @param mixed $date
+ * @param int $completed
+ * 
+ * @return [string]
+ */
 function hours24($date, $completed)
 {
     $result = '';
     if (($date !== null)) {
         $date_timestemp = strtotime($date); /* Получаем заданную дату в timestamp */
         $time =  $date_timestemp - time(); /* Разность между заданой датой и текущим временем в timestamp */
-
         /* 86400 - это количество секунд равное 24 часам */
-        if (($time < 86400) && ($completed === false)) {
+        if (($time < 86400) && ($completed == false)) {
+          
 
             $result = 'task--important';
         }
     }
 
     return $result;
+}
+/** Функция отправляет подготовленный запрос и извлекает данные
+ * @param $stmt
+ * @return [array]
+ */
+function reading_data($stmt)
+{
+    mysqli_stmt_execute($stmt);
+
+    $res = mysqli_stmt_get_result($stmt);
+
+    // чтение данных
+    while ($row = mysqli_fetch_assoc($res)) {
+        $data[] = $row;
+    }
+    return $data;
 }

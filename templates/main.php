@@ -7,9 +7,9 @@
 
             foreach ($projects as $project) {
 
-                $count = list_count($tasks, $project); ?>
+                $count = list_count($tasks, $project['project_name']); ?>
                 <li class='main-navigation__list-item'>
-                    <a class='main-navigation__list-item-link' href='#'><? echo $project; ?></a>
+                    <a class='main-navigation__list-item-link' href='#'><? echo $project['project_name']; ?></a>
                     <span class='main-navigation__list-item-count'><? echo $count; ?></span>
                 </li>
 
@@ -47,35 +47,30 @@
     <table class="tasks">
 
         <?php
-
+        
         foreach ($tasks as $task) { 
-
+            /* Пропускаем выполненые задачи если чекбокс неактивен */
+            if ($show_complete_tasks === 0 && $task['task_completed'] === true) {continue;}
             /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
-            $flag = hours24($task['Date of completion'], $task['Completed']); 
+            $flag = hours24($task['task_date'], $task['task_completed']);
             ?>
-            <tr class='tasks__item task <? echo $task['Completed'] === true ? ' task--completed ' : ''; echo $flag ;?>'>
-                <?php
+            <tr class='tasks__item task <? echo $task['task_completed'] == true ? ' task--completed ' : ''; echo $flag ;?>'>
 
-                if ($show_complete_tasks === 0 && $task['Completed'] === true) {
 
-                    continue;
-                } else { ?>
+                <td class='task__select'>
+                    <label class='checkbox task__checkbox'>
+                        <input class='checkbox__input visually-hidden task__checkbox' type='checkbox' value='1'>
+                        <span class='checkbox__text'><? echo $task['task_name']; ?></span>
+                    </label>
+                </td>
 
-                    <td class='task__select'>
-                        <label class='checkbox task__checkbox'>
-                            <input class='checkbox__input visually-hidden task__checkbox' type='checkbox' value='1'>
-                            <span class='checkbox__text'><? echo $task['Task']; ?></span>
-                        </label>
-                    </td>
+                <td class='task__file'>
+                    <a class='download-link' href='#'>Home.psd</a>
+                </td>
 
-                    <td class='task__file'>
-                        <a class='download-link' href='#'>Home.psd</a>
-                    </td>
-
-                    <td class='task__date'><? echo $task['Date of completion']; ?></td>
+                <td class='task__date'><? echo $task['task_date']; ?></td>
             </tr>
-    <? }
-            } ?>
+    <? }?>
     <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
     <?php
 

@@ -5,69 +5,54 @@ require_once('helpers.php');
 // показывать или нет выполненные задачи
 $show_complete_tasks = rand(0, 1);
 $title = 'Главная';
+
+/* Данные о пользователе */
 $user = 'Владислав';
+$id = 1;
 
-/* Массив проектов */
-$projects  = [
+/* Подключение к базе анных  */
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$link = mysqli_connect("localhost", "root", "", "mydeal_master");
 
-    'Входящие', 'Учеба', 'Работа', 'Домашние дела', 'Авто'
+/* Запрос на выборку всех проектов пользователя */
+$query = "SELECT projects.name as project_name FROM projects
+LEFT JOIN users ON projects.user_id = users.id
+WHERE user_id = ?";
 
+/* Данные запроса */
+$data = [
+    $id
 ];
-/* Массив задач */
-$tasks = [
+/* Функция возвращает подготовленный запрос */
+$stmt = db_get_prepare_stmt($link, $query, $data);
 
-    1 => [
+/* Функция отправляет подготовленный запрос и извлекает данные */
+$projects = reading_data($stmt);
 
-        'Task' => 'Собеседование в IT компании',
-        'Date of completion' => '01.09.2022',
-        'Category' => 'Работа',
-        'Completed' => false,
+/* Запрос на выборку всех задач пользователя */
+$query = "SELECT 
+projects.name as project_name,
+users.name as user_name,
+tasks.name as task_name,
+tasks.date as task_date,
+tasks.completed as task_completed
+FROM
+tasks
+LEFT JOIN users
+ON  tasks.user_id = users.id 
+LEFT JOIN projects
+ON tasks.project_id = projects.id
+WHERE users.id = ?";
 
-    ],
-    2 => [
+/* Функция возвращает подготовленный запрос */
+$stmt = db_get_prepare_stmt($link, $query, $data);
 
-        'Task' => 'Выполнить тестовое задание',
-        'Date of completion' => '03.09.2022',
-        'Category' => 'Работа',
-        'Completed' => false,
+/* Функция отправляет подготовленный запрос и извлекает данные */
+$tasks = reading_data($stmt);
 
-    ],
-    3 => [
-
-        'Task' => 'Сделать задание первого раздела',
-        'Date of completion' => '02.09.2022',
-        'Category' => 'Учеба',
-        'Completed' => true,
-
-    ],
-    4 => [
-
-        'Task' => 'Встреча с другом',
-        'Date of completion' => '30.8.2022',
-        'Category' => 'Входящие',
-        'Completed' => false,
-
-    ],
-    5 => [
-
-        'Task' => 'Купить корм для кота',
-        'Date of completion' => null,
-        'Category' => 'Домашнии дела',
-        'Completed' => false,
-
-    ],
-    6 => [
-
-        'Task' => 'Заказать пиццу',
-        'Date of completion' => null,
-        'Category' => 'Домашнии дела',
-        'Completed' => false,
-
-    ],
-
-];
-
+/* Имя шаблона */
 $name = 'main.php';
+/* Необходимые данные шаблона */
 $data = [
 
     'show_complete_tasks' => $show_complete_tasks,
