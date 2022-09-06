@@ -15,7 +15,7 @@ mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $link = mysqli_connect("localhost", "root", "", "mydeal_master");
 
 /* Запрос на выборку всех проектов пользователя */
-$query = "SELECT projects.name as project_name FROM projects
+$query = "SELECT projects.id as project_id, projects.name as project_name FROM projects
 LEFT JOIN users ON projects.user_id = users.id
 WHERE user_id = ?";
 
@@ -30,7 +30,8 @@ $stmt = db_get_prepare_stmt($link, $query, $data);
 $projects = reading_data($stmt);
 
 /* Запрос на выборку всех задач пользователя */
-$query = "SELECT 
+$query = "SELECT
+projects.id as project_id, 
 projects.name as project_name,
 users.name as user_name,
 tasks.name as task_name,
@@ -50,16 +51,39 @@ $stmt = db_get_prepare_stmt($link, $query, $data);
 /* Функция отправляет подготовленный запрос и извлекает данные */
 $tasks = reading_data($stmt);
 
-/* Имя шаблона */
-$name = 'main.php';
 /* Необходимые данные шаблона */
 $data = [
 
     'show_complete_tasks' => $show_complete_tasks,
     'projects' => $projects,
     'tasks' => $tasks
-
 ];
+
+/* Если есть активный проект */
+if(isset($_REQUEST['project_active'])){
+
+    /* Проверка на существование проекта с заданным id */
+    $query = "SELECT
+    projects.id as project_id
+    FROM
+    projects
+    WHERE projects.id = ?";
+    $projects_id = [
+        $_REQUEST['project_active']
+    ];
+    $stmt = db_get_prepare_stmt($link, $query, $projects_id);
+    $test = reading_data($stmt);
+
+    /* Если такого проекта не существует */
+    if(empty($test)){
+        exit(header('Location: /error404/'));
+    }
+    /* Если проект существует  */
+    $data['project_active'] = $_REQUEST['project_active'];
+}
+
+/* Имя шаблона */
+$name = 'main.php';
 
 $content = include_template($name, $data);
 

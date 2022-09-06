@@ -150,13 +150,11 @@ function include_template($name, array $data = [])
  * @return [int]
  */
 function list_count($tasks, $project)
-{
-
+{   
     $count = 0;
     foreach ($tasks as $task) {
 
         if ($task['project_name'] === $project) {
-
             $count++;
         }
     }
@@ -189,7 +187,7 @@ function hours24($date, $completed)
  * @return [array]
  */
 function reading_data($stmt)
-{
+{   
     mysqli_stmt_execute($stmt);
 
     $res = mysqli_stmt_get_result($stmt);
@@ -198,5 +196,6 @@ function reading_data($stmt)
     while ($row = mysqli_fetch_assoc($res)) {
         $data[] = $row;
     }
-    return $data;
+    mysqli_stmt_close($stmt);
+    return $data??'';
 }

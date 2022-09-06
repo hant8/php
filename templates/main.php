@@ -4,16 +4,21 @@
     <nav class="main-navigation">
         <ul class="main-navigation__list">
             <?php
+            if(!empty($projects)){
 
             foreach ($projects as $project) {
 
-                $count = list_count($tasks, $project['project_name']); ?>
+                $count = list_count($tasks, $project['project_name']);
+                // Ищем активные проект
+                $active_project = (isset($project_active) && ($project_active == $project['project_id']))?' main-navigation__list-item--active' : '';
+                ?>
                 <li class='main-navigation__list-item'>
-                    <a class='main-navigation__list-item-link' href='#'><? echo $project['project_name']; ?></a>
+                <? echo "<a class='main-navigation__list-item-link $active_project' href='index.php?project_active={$project['project_id']}'>{$project['project_name']}</a>";?>
                     <span class='main-navigation__list-item-count'><? echo $count; ?></span>
                 </li>
 
-            <? } ?>
+            <? }
+            } ?>
         </ul>
     </nav>
 
@@ -47,10 +52,16 @@
     <table class="tasks">
 
         <?php
+        if(!empty($tasks)){
         
-        foreach ($tasks as $task) { 
+        foreach ($tasks as $task) {
+
+            if(isset($project_active) && $project_active != $task['project_id']){
+                continue;
+            }
+
             /* Пропускаем выполненые задачи если чекбокс неактивен */
-            if ($show_complete_tasks === 0 && $task['task_completed'] === true) {continue;}
+            if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
             /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
             $flag = hours24($task['task_date'], $task['task_completed']);
             ?>
@@ -70,21 +81,7 @@
 
                 <td class='task__date'><? echo $task['task_date']; ?></td>
             </tr>
-    <? }?>
-    <!--показывать следующий тег <tr/>, если переменная $show_complete_tasks равна единице-->
-    <?php
-
-    if ($show_complete_tasks === 1) { ?>
-        <tr class='tasks__item task task--completed'>
-            <td class='task__select'>
-                <label class='checkbox task__checkbox'>
-                    <input class='checkbox__input visually-hidden' type='checkbox' checked>
-                    <span class='checkbox__text'>Записаться на интенсив 'Базовый PHP'</span>
-                </label>
-            </td>
-            <td class='task__date'>10.10.2019</td>
-            <td class='task__controls'></td>
-        </tr>
-    <? } ?>
+    <?  }
+        }?>
     </table>
 </main>
