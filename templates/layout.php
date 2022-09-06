@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title><? echo $title;?></title>
+    <title><? echo $title; ?></title>
     <link rel="stylesheet" href="css/normalize.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/flatpickr.min.css">
@@ -20,11 +20,11 @@
                 </a>
 
                 <div class="main-header__side">
-                    <a class="main-header__side-item button button--plus open-modal" href="pages/form-task.html">Добавить задачу</a>
+                    <a class='main-header__side-item button button--plus open-modal' href='add.php'>Добавить задачу</a>
 
                     <div class="main-header__side-item user-menu">
                         <div class="user-menu__data">
-                            <p>Константин</p>
+                            <p><? echo $user;?></p>
 
                             <a href="#">Выйти</a>
                         </div>
@@ -33,7 +33,35 @@
             </header>
 
             <div class="content">
-                <? echo $content;?>
+                <section class="content__side">
+                    <h2 class="content__side-heading">Проекты</h2>
+
+                    <nav class="main-navigation">
+                        <ul class="main-navigation__list">
+                            <?php
+                            if (!empty($projects)) {
+
+                                foreach ($projects as $project) {
+
+                                    $count = list_count($tasks, $project['project_name']);
+                                    // Ищем активные проект
+                                    $active_project = (isset($_GET['project_active']) && ($project_active == $project['project_id'])) ? ' main-navigation__list-item--active' : '';
+                                    
+                            ?>
+                                    <li class='main-navigation__list-item'>
+                                        <? echo "<a class='main-navigation__list-item-link $active_project' href='index.php?project_active={$project['project_id']}'>{$project['project_name']}</a>"; ?>
+                                        <span class='main-navigation__list-item-count'><? echo $count; ?></span>
+                                    </li>
+
+                            <? }
+                            } ?>
+                        </ul>
+                    </nav>
+
+                    <a class="button button--transparent button--plus content__side-button" href="pages/form-project.html" target="project_add">Добавить проект</a>
+                </section>
+                
+                <? echo $content; ?>
             </div>
         </div>
     </div>

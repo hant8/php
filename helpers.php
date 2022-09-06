@@ -199,3 +199,129 @@ function reading_data($stmt)
     mysqli_stmt_close($stmt);
     return $data??'';
 }
+
+/** Функция возвращает данные о всех проектов пользователя 
+ * @param  int $id
+ * @param  mysql link
+ * @return [array]
+ */
+function projecstUser($id, $link)
+{   
+
+    $query = "SELECT projects.id as project_id, projects.name as project_name FROM projects
+    LEFT JOIN users ON projects.user_id = users.id
+    WHERE user_id = ?";
+
+    /* Данные запроса */
+    $data = [
+        $id
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    /* Функция отправляет подготовленный запрос и извлекает данные */
+    $projects = reading_data($stmt);
+
+    return $projects;
+}
+
+/** Фуекция возвращает данные о всех задачах пользователя 
+ * @param  int $id
+ * @param  mysql link
+ * @return [array]
+ */
+function tasksUser($id, $link)
+{   
+
+    /* Запрос на выборку всех задач пользователя */
+    $query = "SELECT
+    projects.id as project_id, 
+    projects.name as project_name,
+    users.name as user_name,
+    tasks.name as task_name,
+    tasks.date as task_date,
+    tasks.file as task_file,
+    tasks.completed as task_completed
+    FROM
+    tasks
+    LEFT JOIN users
+    ON  tasks.user_id = users.id 
+    LEFT JOIN projects
+    ON tasks.project_id = projects.id
+    WHERE users.id = ?";
+
+    /* Данные запроса */
+    $data = [
+        $id
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    /* Функция отправляет подготовленный запрос и извлекает данные */
+    $tasks = array_reverse(reading_data($stmt));
+
+
+    return $tasks;
+}
+/** Функция проверяет наличие данного проекта у пользователя
+ * @param  int $project_id
+ * @param  int $id
+ * @param  mysql link
+ * @return bool
+ */
+function issetProject($project_id, $id, $link)
+{   
+
+    $query = "SELECT projects.id as project_id, projects.name as project_name FROM projects
+    LEFT JOIN users ON projects.user_id = users.id
+    WHERE user_id = ? AND projects.id = ?";
+
+    /* Данные запроса */
+    $data = [
+        $id, $project_id
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    /* Функция отправляет подготовленный запрос и извлекает данные */
+    $result = reading_data($stmt);
+
+    return !empty($result)? true : false;
+}
+
+
+/**
+ * @param mixed $id
+ * @param mixed $name
+ * @param mixed $project_id
+ * @param mixed $date
+ * @param mixed $file
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function addTask($id, $name, $project_id, $date, $file, $link)
+{   
+    /* Дата регистрации */
+    $date_register = date('Y-m-d H:i:s');
+    $query = "INSERT INTO 
+    tasks 
+    SET 
+    tasks.user_id = ?,
+    tasks.name = ?,
+    tasks.project_id = ?,
+    tasks.date = ?,
+    tasks.file = ?,
+    tasks.date_register = ?
+    ";
+
+    /* Данные запроса */
+    $data = [
+        $id, $name, $project_id, $date, $file, $date_register
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    mysqli_stmt_execute($stmt);
+    
+}

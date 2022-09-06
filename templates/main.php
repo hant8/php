@@ -1,30 +1,3 @@
-<section class="content__side">
-    <h2 class="content__side-heading">Проекты</h2>
-
-    <nav class="main-navigation">
-        <ul class="main-navigation__list">
-            <?php
-            if(!empty($projects)){
-
-            foreach ($projects as $project) {
-
-                $count = list_count($tasks, $project['project_name']);
-                // Ищем активные проект
-                $active_project = (isset($project_active) && ($project_active == $project['project_id']))?' main-navigation__list-item--active' : '';
-                ?>
-                <li class='main-navigation__list-item'>
-                <? echo "<a class='main-navigation__list-item-link $active_project' href='index.php?project_active={$project['project_id']}'>{$project['project_name']}</a>";?>
-                    <span class='main-navigation__list-item-count'><? echo $count; ?></span>
-                </li>
-
-            <? }
-            } ?>
-        </ul>
-    </nav>
-
-    <a class="button button--transparent button--plus content__side-button" href="pages/form-project.html" target="project_add">Добавить проект</a>
-</section>
-
 <main class="content__main">
     <h2 class="content__main-heading">Список задач</h2>
 
@@ -53,13 +26,12 @@
 
         <?php
         if(!empty($tasks)){
-        
         foreach ($tasks as $task) {
 
-            if(isset($project_active) && $project_active != $task['project_id']){
+            if(isset($_GET['project_active']) && $project_active != $task['project_id']){
                 continue;
             }
-
+            
             /* Пропускаем выполненые задачи если чекбокс неактивен */
             if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
             /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
@@ -76,7 +48,7 @@
                 </td>
 
                 <td class='task__file'>
-                    <a class='download-link' href='#'>Home.psd</a>
+                    <a class='download-link' href='<?{ echo $task['task_file'];}?>'><?{ echo $task['task_file'];}?></a>
                 </td>
 
                 <td class='task__date'><? echo $task['task_date']; ?></td>

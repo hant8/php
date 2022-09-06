@@ -1,5 +1,8 @@
 <?php
-
+session_start();
+ini_set('display_errors', '1');
+ini_set('display_startup_errors', '1');
+error_reporting(E_ALL);
 require_once('helpers.php');
 
 // показывать или нет выполненные задачи
@@ -14,50 +17,9 @@ $id = 1;
 mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
 $link = mysqli_connect("localhost", "root", "", "mydeal_master");
 
-/* Запрос на выборку всех проектов пользователя */
-$query = "SELECT projects.id as project_id, projects.name as project_name FROM projects
-LEFT JOIN users ON projects.user_id = users.id
-WHERE user_id = ?";
+$projects = projecstUser($id, $link);
 
-/* Данные запроса */
-$data = [
-    $id
-];
-/* Функция возвращает подготовленный запрос */
-$stmt = db_get_prepare_stmt($link, $query, $data);
-
-/* Функция отправляет подготовленный запрос и извлекает данные */
-$projects = reading_data($stmt);
-
-/* Запрос на выборку всех задач пользователя */
-$query = "SELECT
-projects.id as project_id, 
-projects.name as project_name,
-users.name as user_name,
-tasks.name as task_name,
-tasks.date as task_date,
-tasks.completed as task_completed
-FROM
-tasks
-LEFT JOIN users
-ON  tasks.user_id = users.id 
-LEFT JOIN projects
-ON tasks.project_id = projects.id
-WHERE users.id = ?";
-
-/* Функция возвращает подготовленный запрос */
-$stmt = db_get_prepare_stmt($link, $query, $data);
-
-/* Функция отправляет подготовленный запрос и извлекает данные */
-$tasks = reading_data($stmt);
-
-/* Необходимые данные шаблона */
-$data = [
-
-    'show_complete_tasks' => $show_complete_tasks,
-    'projects' => $projects,
-    'tasks' => $tasks
-];
+$tasks = tasksUser($id, $link);
 
 /* Если есть активный проект */
 if(isset($_REQUEST['project_active'])){
@@ -79,8 +41,17 @@ if(isset($_REQUEST['project_active'])){
         exit(header('Location: /error404/'));
     }
     /* Если проект существует  */
-    $data['project_active'] = $_REQUEST['project_active'];
+    $project_active = $_REQUEST['project_active'];
 }
+
+/* Необходимые данные шаблона */
+$data = [
+
+    'show_complete_tasks' => $show_complete_tasks,
+    'tasks' => $tasks,
+    'project_active' => $project_active??''
+
+];
 
 /* Имя шаблона */
 $name = 'main.php';
@@ -88,7 +59,15 @@ $name = 'main.php';
 $content = include_template($name, $data);
 
 $name = 'layout.php';
-$data = ['title' => $title, 'content' => $content, 'user' => $user];
+
+$data = [
+    'title' => $title,
+    'content' => $content,
+    'user' => $user,
+    'projects' => $projects,
+    'tasks' => $tasks,
+    'project_active' => $project_active??''
+];
 
 $layout = include_template($name, $data);
 
