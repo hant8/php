@@ -152,12 +152,15 @@ function include_template($name, array $data = [])
 function list_count($tasks, $project)
 {   
     $count = 0;
-    foreach ($tasks as $task) {
+    if(!empty($tasks)){
+        foreach ($tasks as $task) {
 
-        if ($task['project_name'] === $project) {
-            $count++;
+            if ($task['project_name'] === $project) {
+                $count++;
+            }
         }
     }
+    
     return $count;
 }
 /** Функция определяет задачи до выполнени которых меньше 24ч
@@ -290,7 +293,6 @@ function issetProject($project_id, $id, $link)
 
     return !empty($result)? true : false;
 }
-
 /** Функция добавляет новую задачу в бд
  * @param mixed $id
  * @param mixed $name
@@ -392,7 +394,6 @@ function addUser($name, $email, $password, $link)
 
     mysqli_stmt_execute($stmt);
 }
-
 /** Функция возвращает результат по полнотекстовому поиску
  * @param mixed $search
  * @param mixed $link
@@ -419,5 +420,60 @@ function searchTasks($search, $link)
     $tasks = reading_data($stmt);
 
     return $tasks;
+    
+}
+
+/** Функция возвращает результат по полнотекстовому поиску
+ * @param mixed $id
+ * @param mixed $name
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function uniqueProject($id, $name, $link)
+{   
+    $query = "SELECT 
+    projects.name as project_name
+    FROM 
+    projects
+    WHERE projects.name = ? AND  user_id = ?";
+    
+    /* Данные запроса */
+    $data = [
+        $name, $id
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    /* Функция отправляет подготовленный запрос и извлекает данные */
+    $result = reading_data($stmt);
+
+    return !empty($result)? true : false;
+    
+}
+/** Функция добавляет новый проект в бд
+ * @param mixed $id
+ * @param mixed $name
+ * @param mixed $link
+ * 
+ * @return [type]
+ */
+function addProject($id, $name, $link)
+{   
+
+    $query = "INSERT INTO 
+    projects 
+    SET 
+    projects.user_id = ?,
+    projects.name = ?";
+
+    /* Данные запроса */
+    $data = [
+        $id, $name
+    ];
+    /* Функция возвращает подготовленный запрос */
+    $stmt = db_get_prepare_stmt($link, $query, $data);
+
+    mysqli_stmt_execute($stmt);
     
 }

@@ -9,10 +9,10 @@
 
     <div class="tasks-controls">
         <nav class="tasks-switch">
-            <a href="" class="tasks-switch__item tasks-switch__item--active">Все задачи</a>
-            <a href="" class="tasks-switch__item">Повестка дня</a>
-            <a href="" class="tasks-switch__item">Завтра</a>
-            <a href="" class="tasks-switch__item">Просроченные</a>
+            <a href="index.php?sort=all" class="tasks-switch__item <? if(isset($_REQUEST['sort']) && $_REQUEST['sort'] === 'all'){ echo ' tasks-switch__item--active';}?>">Все задачи</a>
+            <a href="index.php?sort=today" class="tasks-switch__item <? if(isset($_REQUEST['sort']) && $_REQUEST['sort'] === 'today'){ echo ' tasks-switch__item--active';}?>">Повестка дня</a>
+            <a href="index.php?sort=tomorrow" class="tasks-switch__item <? if(isset($_REQUEST['sort']) && $_REQUEST['sort'] === 'tomorrow'){ echo ' tasks-switch__item--active';}?>">Завтра</a>
+            <a href="index.php?sort=overdue" class="tasks-switch__item <? if(isset($_REQUEST['sort']) && $_REQUEST['sort'] === 'overdue'){ echo ' tasks-switch__item--active';}?>">Просроченные</a>
         </nav>
 
         <label class="checkbox">
@@ -38,6 +38,34 @@
                     }
                     /* Пропускаем выполненые задачи если чекбокс неактивен */
                     if ($show_complete_tasks === 0 && $task['task_completed'] == true) {continue;}
+                    if(isset($_GET['sort'])){ /* Определяем сортировку */
+        
+                        $сurrently = date('Y-m-d');
+                        switch ($_GET['sort']) {
+                            case 'today':
+                                $time_sort = $сurrently;
+                            break;
+                            case 'tomorrow':
+                                $time_sort = date_create($сurrently);
+                                date_modify($time_sort, '1 day');
+                                $time_sort = date_format($time_sort, 'Y-m-d');
+                            break;
+                            case 'overdue':
+                                $time_sort = date_create($сurrently);
+                                date_modify($time_sort, '-1 day');
+                                $time_sort = date_format($time_sort, 'Y-m-d');
+                                $time_sort = strtotime($time_sort);
+                            break;
+                        }
+                        if($_GET['sort'] === 'today' && $time_sort !== $task['task_date']){
+                            continue;
+                        }elseif($_GET['sort'] === 'tomorrow' && $time_sort !== $task['task_date']){
+                            continue;
+                        }elseif($_GET['sort'] === 'overdue' && ($time_sort < strtotime($task['task_date']) || empty($task['task_date']))){
+                            continue;
+                        }
+        
+                    }    
                     /* Флаг на установку специального класса задачам которым осталось меньше 24 часов до выполнения */
                     $flag = hours24($task['task_date'], $task['task_completed']);
                     ?>
@@ -55,7 +83,8 @@
                             <a class='download-link' href='<?{ echo $task['task_file'];}?>'><?{ echo $task['task_file'];}?></a>
                         </td>
     
-                        <td class='task__date'><? echo $task['task_date']; ?></td>
+                        <td class='task__date'><? $task_date = date_create($task['task_date']);
+                        echo date_format($task_date, 'd.m.Y'); ?></td>
                     </tr>
             <?  }
             }

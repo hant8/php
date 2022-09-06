@@ -70,6 +70,7 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){
 
     if(isset($_GET['search']) && !empty($_GET['search'])){
         
+       
         $get = strip_tags($_GET['search']);
         trim($get);
         $search = searchTasks($get, $link);
