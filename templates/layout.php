@@ -9,11 +9,10 @@
     <link rel="stylesheet" href="css/flatpickr.min.css">
 </head>
 
-<body>
+<body class ="<? echo isset($_SESSION['user_id']) && isset($_SESSION['user_name'])? '' : 'body-background';?>">
     <h1 class="visually-hidden">Дела в порядке</h1>
-
     <div class="page-wrapper">
-        <div class="container container--with-sidebar">
+        <div class="container <? echo isset($_SESSION['user_id']) && isset($_SESSION['user_name'])? 'container--with-sidebar' : '';?>">
             <header class="main-header">
                 <a href="index.php">
                     <img src="img/logo.png" width="153" height="42" alt="Логотип Дела в порядке">
@@ -34,10 +33,11 @@
                     <?}?>
                 </div>
             </header>
-
+            
             <div class="content">
-            <? if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){require 'templates/left_sidebar.php';}?>
-                <? echo $content; ?>
+                <? if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){require 'templates/left_sidebar.php';}
+                echo $content; ?>
+                
             </div>
         </div>
     </div>
@@ -49,7 +49,6 @@
 
                 <p>Веб-приложение для удобного ведения списка дел.</p>
             </div>
-
             <? echo isset($_SESSION['user_id']) && isset($_SESSION['user_name'])? '<a class="main-footer__button button button--plus" href="add.php">Добавить задачу</a>' : '';?>
 
             <div class="main-footer__social social">

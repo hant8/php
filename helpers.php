@@ -261,7 +261,8 @@ function tasksUser($id, $link)
 
     $tasks = reading_data($stmt);
     $tasks = !empty($tasks)? array_reverse($tasks) : '';
-    
+
+
     return $tasks;
 }
 /** Функция проверяет наличие данного проекта у пользователя
@@ -289,6 +290,7 @@ function issetProject($project_id, $id, $link)
 
     return !empty($result)? true : false;
 }
+
 /** Функция добавляет новую задачу в бд
  * @param mixed $id
  * @param mixed $name
@@ -324,6 +326,7 @@ function addTask($id, $name, $project_id, $date, $file, $link)
     mysqli_stmt_execute($stmt);
     
 }
+
 /** Фильтрация данных от XSS
  * @param mixed $arr
  * 

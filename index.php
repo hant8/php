@@ -13,7 +13,7 @@ $title = 'Главная';
 $data = [];
 
 /* Шаблона гостя */
-$name = 'tel_register.php';
+$name = 'tel_guest.php';
 
 if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){
 
@@ -51,8 +51,8 @@ if(isset($_SESSION['user_id']) && isset($_SESSION['user_name'])){
         /* Если проект существует */
         $project_active = strip_tags($_REQUEST['project_active']);
     }
-
     /* Фильтрация данных от XSS */
+
 
     $tasks = !empty($tasks)? xss($tasks): '';
     $projects = !empty($projects)? xss($projects): ''; 
@@ -88,5 +88,3 @@ $data = [
 $layout = include_template($name, $data);
 
 echo $layout;
-
-?>

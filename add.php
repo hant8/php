@@ -14,7 +14,7 @@ $title = 'Добавить задачу';
 
 /* Данные о пользователе */
 $user = $_SESSION['user_name'];
-$id = $_SESSION['user_id'];;
+$id = $_SESSION['user_id'];
 
 $projects = projecstUser($id, $link);
 $tasks = tasksUser($id, $link);
